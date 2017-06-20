@@ -12,6 +12,7 @@
 class UTankBarrel; 
 class UTankTurret;
 class UTankAimingComponent;
+class AProjectile;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -43,9 +44,21 @@ private:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	UPROPERTY(EditAnywhere, Category = Firing)
-	float LaunchSpeed = 100000; // TODO find sensible default
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	float LaunchSpeed = 4000; // TODO find sensible default
 	
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	float ReloadTimeInSeconds = 3;
+
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
+	//UClass* ProjectileBlueprint;	// Alternative: https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/TSubclassOf/
+	TSubclassOf<AProjectile> ProjectileBlueprint;
+
+	// Local barrel reference for spawning projectiles
+	UTankBarrel* Barrel = nullptr;
+
 	
+
+	double LastFireTime = 0;
 
 };
