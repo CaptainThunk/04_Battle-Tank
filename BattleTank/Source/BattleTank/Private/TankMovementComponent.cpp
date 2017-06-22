@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright DBH Software
 
 #include "TankMovementComponent.h"
 #include "TankTrack.h"
@@ -8,30 +8,22 @@ void UTankMovementComponent::Initialise(UTankTrack* LeftTrackToSet, UTankTrack* 
 {
 	LeftTrack = LeftTrackToSet;
 	RightTrack = RightTrackToSet;
-
 }
+
 void UTankMovementComponent::IntendMoveForward(float Throw)
 {
-	// TODO clamp throttle between -1 and +1
-
-	if (!LeftTrack || !RightTrack) { return; }
+	if (!ensure(LeftTrack && RightTrack)) { return; }
 
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(Throw);
-	
-	// TODO Prevent dual throttle amplifying speed
 }
 
 void UTankMovementComponent::IntendTurnRight(float Throw)
 {
-	// TODO clamp throttle between -1 and +1
-
-	if (!LeftTrack || !RightTrack) { return; }
+	if (!ensure(LeftTrack && RightTrack)) { return; }
 
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(-Throw);
-
-	// TODO Prevent dual throttle amplifying speed
 }
 
 void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
@@ -43,9 +35,8 @@ void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool
 	
 	auto ForwardThrow = FVector::DotProduct(TankForward, AIForwardIntention);
 	IntendMoveForward(ForwardThrow);
-
-	//auto Time = GetWorld()->GetTimeSeconds();
-	//UE_LOG(LogTemp, Warning, TEXT("%f: %s - MoveVelocity - %s"), Time, *Name, *MoveVelocityString);
+	auto RightThrowVector = FVector::CrossProduct(TankForward, AIForwardIntention);
+	IntendTurnRight(RightThrowVector.Z);
 }
 
 
