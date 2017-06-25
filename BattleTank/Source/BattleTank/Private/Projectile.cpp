@@ -27,7 +27,7 @@ AProjectile::AProjectile()
 	ProjectileMovementComponent->bAutoActivate = false;
 	
 	ExplosionForce = CreateDefaultSubobject<URadialForceComponent>(FName("Explosion Force"));
-	ImpactBlast->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	ExplosionForce->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	//ExplosionForce->bAutoActivate = false;
 }
 
@@ -38,7 +38,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	ImpactBlast->Activate();
 
 	ExplosionForce->FireImpulse();
-
+	//UE_LOG(LogTemp, Warning, TEXT("Hit me"));
 }
 
 // Called when the game starts or when spawned
