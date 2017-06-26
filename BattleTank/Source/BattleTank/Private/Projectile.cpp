@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright DBH Software
 
 #include "Projectile.h"
 #include "BattleTank.h"
@@ -34,11 +34,28 @@ AProjectile::AProjectile()
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	LaunchBlast->Deactivate();
-
 	ImpactBlast->Activate();
-
 	ExplosionForce->FireImpulse();
-	//UE_LOG(LogTemp, Warning, TEXT("Hit me"));
+	
+	SetRootComponent(ImpactBlast);
+	CollisionMesh->DestroyComponent();
+
+	UGameplayStatics::ApplyRadialDamage(
+		this,
+		ProjectileDamage,
+		GetActorLocation(),
+		ExplosionForce->Radius,			// for consistency
+		UDamageType::StaticClass(),
+		TArray<AActor*>()				// damage all actors
+	);
+
+	FTimerHandle Timer;
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &AProjectile::OnTimerExpire, DestroyDelay, false);
+}
+
+void AProjectile::OnTimerExpire()
+{
+	Destroy();
 }
 
 // Called when the game starts or when spawned
